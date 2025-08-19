@@ -71,7 +71,7 @@
             <div class="chat-input-container">
                 <div id="preview-container"></div>
                 <div class="input-area">
-                    <input type="file" id="image-upload-input" accept="image/*" style="display: none;"><button class="icon-btn" id="image-upload-btn" title="ছবি পাঠান">🖼️</button>
+                    <input type="file" id="image-upload-input" accept="image/*" style="display: none;"><button class="icon-btn" id="image-upload-btn" title="ছবি পাঠান">📎</button>
                     <textarea id="user-input" placeholder="প্রশ্ন করুন..." rows="1"></textarea><button class="icon-btn" id="send-btn" title="পাঠান">➤</button>
                 </div>
             </div>
@@ -98,7 +98,7 @@
         function saveChats() { localStorage.setItem(STORAGE_KEY, JSON.stringify(allChats)); }
         function loadChats() { const savedData = localStorage.getItem(STORAGE_KEY); if (savedData) { allChats = JSON.parse(savedData); if (!allChats.activeChatId || !allChats.conversations[allChats.activeChatId]) startNewChat(); } else startNewChat(); renderSidebar(); loadChat(allChats.activeChatId); }
         function renderSidebar() { chatList.innerHTML = ''; Object.values(allChats.conversations).sort((a,b) => b.id.localeCompare(a.id)).forEach(chat => { const li = document.createElement('li'); li.textContent = chat.title; li.dataset.chatId = chat.id; if (chat.id === allChats.activeChatId) li.classList.add('active'); const deleteBtn = document.createElement('button'); deleteBtn.className = 'delete-chat-btn'; deleteBtn.innerHTML = '🗑️'; deleteBtn.onclick = (e) => { e.stopPropagation(); deleteChat(chat.id); }; li.appendChild(deleteBtn); li.onclick = () => { loadChat(chat.id); body.classList.remove('sidebar-open'); }; chatList.appendChild(li); }); }
-        function loadChat(chatId) { allChats.activeChatId = chatId; const chat = allChats.conversations[chatId]; chatBox.innerHTML = ''; if (chat.history.length === 0) { appendMessage("হ্যালো! আমি Electra। নতুন কিছু জিজ্ঞাসা করুন।", 'bot-message', false); } else { chat.history.forEach(msg => { const text = msg.parts.find(p => p.text)?.text || (msg.role === 'user' && msg.parts.length > 0 ? 'Image' : ''); const className = msg.role === 'user' ? 'user-message' : 'bot-message'; appendMessage(text, className, false); }); } renderSidebar(); saveChats(); }
+        function loadChat(chatId) { allChats.activeChatId = chatId; const chat = allChats.conversations[chatId]; chatBox.innerHTML = ''; if (chat.history.length === 0) { appendMessage("হ্যালো! আমি Electra। নতুন কিছু জিজ্ঞাসা করুন।অথবা Whatsapp বা Facebook লিখে মেসেজ করুন। ", 'bot-message', false); } else { chat.history.forEach(msg => { const text = msg.parts.find(p => p.text)?.text || (msg.role === 'user' && msg.parts.length > 0 ? 'Image' : ''); const className = msg.role === 'user' ? 'user-message' : 'bot-message'; appendMessage(text, className, false); }); } renderSidebar(); saveChats(); }
         function startNewChat() { const newChatId = `chat_${Date.now()}`; allChats.conversations[newChatId] = { id: newChatId, title: 'New Chat', history: [] }; allChats.activeChatId = newChatId; loadChat(newChatId); }
         function deleteChat(chatId) { if (confirm('আপনি কি এই আলোচনাটি মুছে ফেলতে চান?')) { delete allChats.conversations[chatId]; if (allChats.activeChatId === chatId) { const remainingIds = Object.keys(allChats.conversations); if (remainingIds.length > 0) loadChat(remainingIds[0]); else startNewChat(); } renderSidebar(); saveChats(); } }
 
@@ -106,7 +106,7 @@
         menuToggle.addEventListener('click', () => body.classList.toggle('sidebar-open'));
         overlay.addEventListener('click', () => body.classList.remove('sidebar-open'));
         document.addEventListener('DOMContentLoaded', loadChats);
-        function applyTheme(theme) { body.className = theme + '-mode'; themeToggleBtn.textContent = (theme === 'light') ? '🌙' : '☀️'; }
+        function applyTheme(theme) { body.className = theme + '-mode'; themeToggleBtn.textContent = (theme === 'light') ? '🌜' : '☀'; }
         themeToggleBtn.addEventListener('click', () => { const newTheme = body.classList.contains('light-mode') ? 'dark' : 'light'; applyTheme(newTheme); localStorage.setItem('theme', newTheme); });
         applyTheme(localStorage.getItem('theme') || 'dark');
         imageUploadBtn.addEventListener('click', () => imageUploadInput.click());
@@ -123,9 +123,9 @@
             
             const lowerCaseMessage = messageText.toLowerCase();
             // --- FIX: অ্যাডমিন কমান্ড আবার যোগ করা হয়েছে ---
-            if (lowerCaseMessage === 'admin facebook' || lowerCaseMessage === 'admin whatsapp') {
-                const title = lowerCaseMessage === 'admin facebook' ? "Admin Facebook Profile:" : "Admin WhatsApp Channel:";
-                const url = lowerCaseMessage === 'admin facebook' ? "https://www.facebook.com/m.tasniyatania" : "https://whatsapp.com/channel/0029VaYOKD7Gk1FnVrxOLQ0I";
+            if (lowerCaseMessage === 'facebook' || lowerCaseMessage === 'whatsapp') {
+                const title = lowerCaseMessage === 'facebook' ? "Admin Facebook Profile:" : "Admin WhatsApp Channel:";
+                const url = lowerCaseMessage === 'facebook' ? "https://www.facebook.com/m.tasniyatania" : "https://whatsapp.com/channel/0029VaYOKD7Gk1FnVrxOLQ0I";
                 const linkHTML = `${title}<br><a href="${url}" target="_blank">${url}</a>`;
                 appendMessage(linkHTML, 'bot-message', false);
                 userInput.value = ""; userInput.style.height = 'auto';
